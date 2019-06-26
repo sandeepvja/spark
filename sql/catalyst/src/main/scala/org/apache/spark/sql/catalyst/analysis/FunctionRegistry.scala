@@ -366,6 +366,7 @@ object FunctionRegistry {
     expression[UnBase64]("unbase64"),
     expression[Unhex]("unhex"),
     expression[Upper]("upper"),
+    expression[SplitPart]("split_part"),
     expression[XPathList]("xpath"),
     expression[XPathBoolean]("xpath_boolean"),
     expression[XPathDouble]("xpath_double"),
@@ -375,6 +376,7 @@ object FunctionRegistry {
     expression[XPathLong]("xpath_long"),
     expression[XPathShort]("xpath_short"),
     expression[XPathString]("xpath_string"),
+
 
     // datetime functions
     expression[AddMonths]("add_months"),

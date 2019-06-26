@@ -344,6 +344,39 @@ case class Upper(child: Expression)
   }
 }
 
+
+@ExpressionDescription(
+  usage = "_FUNC_(str, delim, pos) - Returns the given field  by splitting string on delimiter " +
+    "and (counting from one)",
+  examples = """
+    Examples:
+      > SELECT _FUNC_('abc~@~def~@~ghi', '~@~', 2);
+       def
+  """,
+  since = "3.0.0")
+case class SplitPart(str: Expression, delimiter: Expression, pos: Expression)
+  extends TernaryExpression with ImplicitCastInputTypes {
+
+  override def dataType: DataType = StringType
+  override def inputTypes: Seq[DataType] = Seq(StringType, StringType, IntegerType)
+  override def children: Seq[Expression] = str :: delimiter :: pos :: Nil
+
+  override def nullSafeEval(string: Any, regex: Any, pos: Any): Any = {
+    val strings = string.asInstanceOf[UTF8String].split(
+      regex.asInstanceOf[UTF8String], -1)
+    strings(pos.asInstanceOf[Int]-1)
+  }
+
+  override def doGenCode(ctx: CodegenContext, ev: ExprCode): ExprCode = {
+    val arrayClass = classOf[GenericArrayData].getName
+    nullSafeCodeGen(ctx, ev, (str, delimiter, limit) =>
+    { s"""${ev.value} = $str.split($delimiter,$limit);""".stripMargin })
+  }
+
+  override def prettyName: String = "split_part"
+}
+
+
 /**
  * A function that converts the characters of a string to lowercase.
  */
